@@ -30,7 +30,7 @@ public class BookRepositoryImpl implements BookRepository {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
-            throw e;
+            throw new RuntimeException("Failed to save the book: " + e);
         }
     }
 
@@ -38,6 +38,8 @@ public class BookRepositoryImpl implements BookRepository {
     public List<Book> findAll() {
         try (EntityManager entityManager = factory.createEntityManager()) {
             return entityManager.createQuery("SELECT b FROM Book b", Book.class).getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to retrieve books from the database", e);
         }
     }
 }
