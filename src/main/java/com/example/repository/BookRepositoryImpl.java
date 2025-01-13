@@ -1,10 +1,12 @@
 package com.example.repository;
 
+import com.example.exception.EntityNotFoundException;
 import com.example.model.Book;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -39,7 +41,18 @@ public class BookRepositoryImpl implements BookRepository {
         try (EntityManager entityManager = factory.createEntityManager()) {
             return entityManager.createQuery("SELECT b FROM Book b", Book.class).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to retrieve books from the database", e);
+            throw new EntityNotFoundException("Failed to retrieve books from the database", e);
         }
+    }
+
+    @Override
+    public Optional<Book> findById(Long id) {
+        Book book;
+        try (EntityManager entityManager = factory.createEntityManager()) {
+            book = entityManager.find(Book.class, id);
+        } catch (Exception e) {
+            throw new EntityNotFoundException("Failed to retrieve books from the database", e);
+        }
+        return Optional.ofNullable(book);
     }
 }
