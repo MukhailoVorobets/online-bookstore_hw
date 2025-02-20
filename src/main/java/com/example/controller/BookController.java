@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,7 +31,7 @@ public class BookController {
 
     @GetMapping
     @Operation(summary = "Get all books", description = "Get a list of all available books")
-    public List<BookDto> getAll(Pageable pageable) {
+    public Page<BookDto> getAll(Pageable pageable) {
         return bookService.findAll(pageable);
     }
 
@@ -63,7 +64,7 @@ public class BookController {
 
     @GetMapping("/search")
     @Operation(summary = "Search book by parameters: title, author, isbn",
-            description = "Update book by parameters: title, author, isbn")
+            description = "Search book by parameters: title, author, isbn")
     public List<BookDto> search(BookSearchParameters searchParameters) {
         return bookService.search(searchParameters);
     }
