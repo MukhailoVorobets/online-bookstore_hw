@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto register(UserRegistrationRequestDto request)
             throws RegistrationException {
-        if (repository.findByEmail(request.getEmail()).isPresent()) {
+        if (repository.existsByEmail(request.getEmail())) {
             throw new RegistrationException("Can't register User");
         }
 
