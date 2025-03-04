@@ -5,6 +5,6 @@ import com.example.dto.UserResponseDto;
 import com.example.exception.RegistrationException;
 
 public interface UserService {
-    public UserResponseDto register(UserRegistrationRequestDto request)
+    UserResponseDto register(UserRegistrationRequestDto request)
             throws RegistrationException;
 }
