@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.dto.UserRegistrationRequestDto;
 import com.example.dto.UserResponseDto;
+import com.example.exception.EntityNotFoundException;
 import com.example.exception.RegistrationException;
 import com.example.mapper.UserMapper;
 import com.example.model.Role;
@@ -33,7 +34,8 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toModel(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         Role userRole = roleRepository.findByRole(Role.RoleName.USER)
-                .orElseThrow(() -> new RuntimeException("Role USER not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Role "
+                        + Role.RoleName.USER + " not found"));
         user.setRoles(Set.of(userRole));
         return userMapper.toDto(repository.save(user));
     }
