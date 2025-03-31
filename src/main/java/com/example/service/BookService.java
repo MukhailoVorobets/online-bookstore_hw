@@ -5,7 +5,9 @@ import com.example.dto.BookSearchParameters;
 import com.example.dto.CreateBookRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public interface BookService {
     BookDto save(CreateBookRequestDto requestDto);
 
@@ -17,5 +19,5 @@ public interface BookService {
 
     BookDto updateBookById(Long id, CreateBookRequestDto requestDto);
 
-    public Page<BookDto> search(BookSearchParameters searchParameters, Pageable pageable);
+    Page<BookDto> search(BookSearchParameters searchParameters, Pageable pageable);
 }
