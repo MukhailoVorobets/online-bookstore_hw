@@ -5,9 +5,7 @@ import com.example.dto.BookSearchParameters;
 import com.example.dto.CreateBookRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 public interface BookService {
     BookDto save(CreateBookRequestDto requestDto);
 
