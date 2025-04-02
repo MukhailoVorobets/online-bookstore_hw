@@ -6,23 +6,35 @@ import com.example.dto.CreateBookRequestDto;
 import com.example.exception.EntityNotFoundException;
 import com.example.mapper.BookMapper;
 import com.example.model.Book;
+import com.example.model.Category;
 import com.example.repository.BookRepository;
 import com.example.repository.BookSpecificationBuilder;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
+    private final CategoryService categoryService;
 
     @Override public BookDto save(CreateBookRequestDto requestDto) {
         Book book = bookMapper.toModel(requestDto);
+        if (requestDto.getCategoryIds() != null) {
+            Set<Category> categories = requestDto.getCategoryIds().stream()
+                    .map(categoryService::getCategoryById)
+                    .collect(Collectors.toSet());
+            book.setCategories(categories);
+        }
         return bookMapper.toDto(bookRepository.save(book));
     }
 
