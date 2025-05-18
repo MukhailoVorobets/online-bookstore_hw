@@ -45,3 +45,4 @@ databaseChangeLog:
               - column: { name: id, value: 7 }
               - column: { name: name, value: "Thriller" }
               - column: { name: description, value: "Mystery is a fiction genre where the nature of an event, usually a murder or other crime, remains mysterious until the end of the story." }
+
