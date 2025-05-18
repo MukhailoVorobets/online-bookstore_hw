@@ -1,12 +1,12 @@
 package com.example.controller;
 
-import com.example.dto.UserLoginRequestDto;
-import com.example.dto.UserLoginResponseDto;
-import com.example.dto.UserRegistrationRequestDto;
-import com.example.dto.UserResponseDto;
+import com.example.dto.user.UserLoginRequestDto;
+import com.example.dto.user.UserLoginResponseDto;
+import com.example.dto.user.UserRegistrationRequestDto;
+import com.example.dto.user.UserResponseDto;
 import com.example.exception.RegistrationException;
-import com.example.service.AuthenticationService;
-import com.example.service.UserService;
+import com.example.service.user.AuthenticationService;
+import com.example.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
