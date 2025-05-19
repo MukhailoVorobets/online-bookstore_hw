@@ -41,9 +41,9 @@ public class CartController {
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Add item to the shopping cart",
             description = "Add item to the shopping cart")
-    public ShoppingCartDto addItemToShoppingCart(@RequestBody @Valid
-                                                     AddToCartRequestDto addToCartRequestDto,
-                                                 Authentication authentication) {
+    public ShoppingCartDto addItemToShoppingCart(
+            @RequestBody @Valid AddToCartRequestDto addToCartRequestDto,
+            Authentication authentication) {
         Long userId = getCurrentUserId(authentication);
         return shoppingCartService.addCartItem(userId, addToCartRequestDto);
     }

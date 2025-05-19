@@ -1,13 +1,13 @@
 package com.example.dto.shoppingcart;
 
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.NonNull;
 
 public record AddToCartRequestDto(
         @NonNull
         Long bookId,
 
-        @Min(1)
+        @Positive
         int quantity
 ) {
 }

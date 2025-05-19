@@ -6,11 +6,10 @@ import com.example.exception.EntityNotFoundException;
 import com.example.exception.RegistrationException;
 import com.example.mapper.UserMapper;
 import com.example.model.Role;
-import com.example.model.ShoppingCart;
 import com.example.model.User;
 import com.example.repository.role.RoleRepository;
-import com.example.repository.shoppingcart.ShoppingCartRepository;
 import com.example.repository.user.UserRepository;
+import com.example.service.shoppingcart.ShoppingCartService;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +24,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final ShoppingCartRepository shoppingCartRepository;
+    private final ShoppingCartService shoppingCartService;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto request)
@@ -42,10 +41,8 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EntityNotFoundException("Role "
                         + Role.RoleName.USER + " not found"));
         user.setRoles(Set.of(userRole));
-
-        ShoppingCart shoppingCart = new ShoppingCart();
-        shoppingCart.setUser(user);
-        user.setShoppingCart(shoppingCart);
-        return userMapper.toDto(repository.save(user));
+        repository.save(user);
+        shoppingCartService.createShoppingCart(user);
+        return userMapper.toDto(user);
     }
 }

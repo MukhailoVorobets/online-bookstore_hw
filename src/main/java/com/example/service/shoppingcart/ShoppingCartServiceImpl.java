@@ -13,7 +13,6 @@ import com.example.model.User;
 import com.example.repository.book.BookRepository;
 import com.example.repository.cartitem.CartItemRepository;
 import com.example.repository.shoppingcart.ShoppingCartRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,14 +46,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 .orElseThrow(() ->
                         new EntityNotFoundException("Book not  found with id: "
                         + request.bookId()));
-        Optional<CartItem> existingCartItem = shoppingCart.getCartItems().stream()
-                        .filter(cartItem -> cartItem.getBook().getId().equals(request.bookId()))
-                        .findFirst();
+        CartItem existingCartItem = cartItemRepository
+                .findByBookIdAndShoppingCartId(request.bookId(), userId).orElse(null);
 
-        if (existingCartItem.isPresent()) {
-            CartItem cartItem = existingCartItem.get();
-            cartItem.setQuantity(cartItem.getQuantity() + request.quantity());
-            cartItemRepository.save(cartItem);
+        if (existingCartItem != null) {
+            existingCartItem.setQuantity(existingCartItem.getQuantity() + request.quantity());
+            cartItemRepository.save(existingCartItem);
         } else {
             CartItem cartItem = cartItemMapper.toModel(request);
             cartItem.setShoppingCart(shoppingCart);
