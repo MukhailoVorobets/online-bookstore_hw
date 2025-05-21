@@ -5,6 +5,7 @@ import lombok.NonNull;
 
 public record AddToCartRequestDto(
         @NonNull
+        @Positive
         Long bookId,
 
         @Positive
