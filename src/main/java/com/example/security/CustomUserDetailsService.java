@@ -1,7 +1,7 @@
 package com.example.security;
 
 import com.example.exception.EntityNotFoundException;
-import com.example.repository.UserRepository;
+import com.example.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

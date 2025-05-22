@@ -1,8 +1,8 @@
 package com.example.mapper;
 
 import com.example.config.MapperConfig;
-import com.example.dto.CategoryDto;
-import com.example.dto.CreateCategoryRequestDto;
+import com.example.dto.category.CategoryDto;
+import com.example.dto.category.CreateCategoryRequestDto;
 import com.example.model.Category;
 import java.util.Set;
 import java.util.stream.Collectors;

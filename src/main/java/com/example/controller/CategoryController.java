@@ -1,9 +1,9 @@
 package com.example.controller;
 
-import com.example.dto.BookDtoWithoutCategoryIds;
-import com.example.dto.CategoryDto;
-import com.example.dto.CreateCategoryRequestDto;
-import com.example.service.CategoryService;
+import com.example.dto.book.BookDtoWithoutCategoryIds;
+import com.example.dto.category.CategoryDto;
+import com.example.dto.category.CreateCategoryRequestDto;
+import com.example.service.category.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

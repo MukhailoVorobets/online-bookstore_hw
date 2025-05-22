@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: 10-insert-categories
+      author: Mykhailo
+      changes:
+        - insert:
+            tableName: categories
+            columns:
+              - column: {name: id, value: 1}
+              - column: {name: name, value: "Mystery"}
+              - column: {name: description, value: "Mystery is a fiction genre where the nature of an event, usually a murder or other crime, remains mysterious until the end of the story."}
+        - insert:
+            tableName: categories
+            columns:
+              - column: { name: id, value: 2 }
+              - column: { name: name, value: "Fantasy" }
+              - column: { name: description, value: "Fantasy. This book genre is characterized by elements of magic or the supernatural and is often inspired by mythology or folklore." }
+        - insert:
+            tableName: categories
+            columns:
+              - column: { name: id, value: 3 }
+              - column: { name: name, value: "Science fiction" }
+              - column: { name: description, value: "Science fiction is a genre of speculative fiction which stereotypically deals with imaginative and futuristic concepts such as advanced science and technology, space exploration, time travel, parallel universes, and extraterrestrial life." }
+        - insert:
+            tableName: categories
+            columns:
+              - column: { name: id, value: 4 }
+              - column: { name: name, value: "Horror" }
+              - column: { name: description, value: "Horror is a film genre that seeks to elicit physical or psychological fear in its viewers. Horror films often explore dark subject matter and may deal with transgressive topics or themes." }
+        - insert:
+            tableName: categories
+            columns:
+              - column: {name: id, value: 5}
+              - column: {name: name, value: "Historical Fiction"}
+              - column: {name: description, value: "Historical fiction is a literary genre in which a fictional plot takes place in the setting of particular real historical events."}
+        - insert:
+            tableName: categories
+            columns:
+              - column: {name: id, value: 6}
+              - column: {name: name, value: "Romance novel"}
+              - column: {name: description, value: "A romance or romantic novel is a genre fiction novel that primarily focuses on the relationship and romantic love between two people, typically with an emotionally satisfying and optimistic ending."}
+        - insert:
+            tableName: categories
+            columns:
+              - column: { name: id, value: 7 }
+              - column: { name: name, value: "Thriller" }
+              - column: { name: description, value: "Mystery is a fiction genre where the nature of an event, usually a murder or other crime, remains mysterious until the end of the story." }
+
