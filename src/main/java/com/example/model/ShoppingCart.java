@@ -30,6 +30,6 @@ public class ShoppingCart {
     private User user;
     @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartItem> cartItems;
-    @Column(name = "is_deleted", columnDefinition = "TINYINT", nullable = false)
+    @Column(columnDefinition = "TINYINT", nullable = false)
     private boolean isDeleted = false;
 }
