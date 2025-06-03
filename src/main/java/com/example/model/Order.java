@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "orders")
@@ -40,6 +41,7 @@ public class Order {
     private BigDecimal total;
 
     @Column(nullable = false)
+    @CreationTimestamp
     private LocalDateTime orderDate;
 
     @Column(nullable = false)
@@ -47,4 +49,11 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderItem> orderItems;
+
+    public enum Status {
+    PENDING,
+    COMPLETED,
+    DELIVERED,
+    CANCELED
+    }
 }

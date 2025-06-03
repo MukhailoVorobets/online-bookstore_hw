@@ -48,6 +48,11 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 
+    @ExceptionHandler(OrderCreatingException.class)
+    public ResponseEntity<String> handlerOrderCreatingException(OrderCreatingException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
     private String getErrorMassage(ObjectError e) {
         if (e instanceof FieldError fieldError) {
             String field = fieldError.getField();

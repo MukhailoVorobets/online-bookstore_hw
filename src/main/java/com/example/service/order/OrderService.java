@@ -3,7 +3,7 @@ package com.example.service.order;
 import com.example.dto.order.CreateOrderRequestDto;
 import com.example.dto.order.OrderItemsResponseDto;
 import com.example.dto.order.OrderResponseDto;
-import com.example.model.Status;
+import com.example.model.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,5 +16,5 @@ public interface OrderService {
 
     OrderItemsResponseDto getSpecificOrderItem(Long orderId, Long itemId, Long userId);
 
-    OrderResponseDto updateOrderStatus(Long orderId, Status status);
+    OrderResponseDto updateOrderStatus(Long orderId, Order.Status status);
 }

@@ -4,6 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 
 public record CreateOrderRequestDto(
         @NotBlank
-        String sippingAddress
+        String shippingAddress
 ) {
 }

@@ -1,10 +1,10 @@
 package com.example.dto.order;
 
-import com.example.model.Status;
+import com.example.model.Order;
 import lombok.NonNull;
 
 public record UpdateOrderStatusRequestDto(
         @NonNull
-        Status status
+        Order.Status status
 ) {
 }

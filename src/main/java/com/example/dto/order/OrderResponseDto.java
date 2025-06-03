@@ -1,6 +1,6 @@
 package com.example.dto.order;
 
-import com.example.model.Status;
+import com.example.model.Order;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,6 +11,6 @@ public record OrderResponseDto(
         List<OrderItemsResponseDto> orderItems,
         LocalDateTime orderDate,
         BigDecimal total,
-        Status status
+        Order.Status status
 ) {
 }
