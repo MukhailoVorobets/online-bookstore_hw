@@ -35,4 +35,3 @@ build/
 # Docker environment files
 .env
 !.env.template
-
