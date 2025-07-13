@@ -1,5 +1,8 @@
 package com.example.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -8,13 +11,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.dto.book.BookDto;
 import com.example.dto.category.CategoryDto;
 import com.example.dto.category.CreateCategoryRequestDto;
+import com.example.util.TestConstants;
+import com.example.util.TestUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,26 +36,10 @@ import org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CategoryControllerTest {
     protected static MockMvc mockMvc;
-    private static final String URL = "/categories";
-    private static final String URL_ID = "/categories/{id}";
-    private static final String EMPTY_STRING = "";
-    private static final Long ONE = 1L;
-    private static final Long TWO = 2L;
-    private static final Long THREE = 3L;
-    private static final Long NON_EXISTENT_ID = 999L;
-    private static final String CATEGORY_NAME = "Category";
-    private static final String CATEGORY_DESCRIPTION = "Description";
-    private static final String CATEGORY_NAME_1 = "Test name1";
-    private static final String CATEGORY_DESCRIPTION_1 = "Description test1";
-    private static final String CATEGORY_NAME_2 = "Test name2";
-    private static final String CATEGORY_DESCRIPTION_2 = "Description test2";
-    private static final String CATEGORY_NAME_3 = "Test name3";
-    private static final String CATEGORY_DESCRIPTION_3 = "Description test3";
-    private static final String UPDATE_CATEGORY_NAME = "Update Category name";
-    private static final String UPDATE__CATEGORY_DESCRIPTION = "Update Description";
-    private CreateCategoryRequestDto createCategoryRequestDto;
+    private final TestUtil testUtil = new TestUtil();
     private CreateCategoryRequestDto createCategoryInvalidInput;
     private CreateCategoryRequestDto updateCategoryRequestDto;
+    private CreateCategoryRequestDto createCategoryRequestDto;
     private CategoryDto categoryDto1;
     private CategoryDto categoryDto2;
     private CategoryDto categoryDto3;
@@ -62,15 +49,12 @@ class CategoryControllerTest {
 
     @BeforeEach
     void setUp() {
-        createCategoryRequestDto = new CreateCategoryRequestDto(CATEGORY_NAME,
-                CATEGORY_DESCRIPTION);
-        categoryDto1 = new CategoryDto(ONE, CATEGORY_NAME_1, CATEGORY_DESCRIPTION_1);
-        categoryDto2 = new CategoryDto(TWO, CATEGORY_NAME_2, CATEGORY_DESCRIPTION_2);
-        categoryDto3 = new CategoryDto(THREE, CATEGORY_NAME_3, CATEGORY_DESCRIPTION_3);
-        createCategoryInvalidInput = new CreateCategoryRequestDto(EMPTY_STRING,
-                CATEGORY_DESCRIPTION_1);
-        updateCategoryRequestDto = new CreateCategoryRequestDto(UPDATE_CATEGORY_NAME,
-                UPDATE__CATEGORY_DESCRIPTION);
+        createCategoryRequestDto = testUtil.getCreateCategoryRequestDto();
+        categoryDto1 = testUtil.getCategoryDto1();
+        categoryDto2 = testUtil.getCategoryDto2();
+        categoryDto3 = testUtil.getCategoryDto3();
+        createCategoryInvalidInput = testUtil.getCreateCategoryInvalidInput();
+        updateCategoryRequestDto = testUtil.getUpdateCategoryRequestDto();
     }
 
     @BeforeAll
@@ -87,22 +71,21 @@ class CategoryControllerTest {
     @Test
     @DisplayName("Create a new category")
     @Sql(scripts = "classpath:database/category/remove-category-from-categories-table.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:database/category/remove-category-from-categories-table.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void createCategory_ValidRequestDto_Success() throws Exception {
         String jsonRequest = objectMapper.writeValueAsString(createCategoryRequestDto);
-
-        MvcResult result = mockMvc.perform(
-                post(URL)
+        MvcResult result = mockMvc.perform(post(TestConstants.URL_CATEGORY)
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isCreated()).andReturn();
-
         CategoryDto actual = objectMapper
                 .readValue(result.getResponse().getContentAsString(), CategoryDto.class);
-        Assertions.assertNotNull(actual);
-        Assertions.assertNotNull(actual.id());
-
-        EqualsBuilder.reflectionEquals(createCategoryRequestDto, actual, "id");
+        assertNotNull(actual);
+        assertNotNull(actual.id());
+        assertEquals(TestConstants.CATEGORY_NAME, actual.name());
+        assertEquals(TestConstants.CATEGORY_DESCRIPTION, actual.description());
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -114,8 +97,7 @@ class CategoryControllerTest {
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void createCategory_InvalidInput_StatusIsBadRequest() throws Exception {
         String jsonRequest = objectMapper.writeValueAsString(createCategoryInvalidInput);
-
-        mockMvc.perform(post(URL)
+        mockMvc.perform(post(TestConstants.URL_CATEGORY)
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isBadRequest());
@@ -131,21 +113,23 @@ class CategoryControllerTest {
             "classpath:database/category/remove-category-from-categories-table.sql"},
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void getAll_GivenCategoriesInCatalog_ShouldReturnAllCategories() throws Exception {
-        MvcResult result = mockMvc.perform(get(URL)
+        MvcResult result = mockMvc.perform(get(TestConstants.URL_CATEGORY)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
-
         String responseContent = result.getResponse().getContentAsString();
         JsonNode root = objectMapper.readTree(responseContent);
-        JsonNode content = root.get("content");
-
-        List<BookDto> actual = objectMapper.readerForListOf(CategoryDto.class).readValue(content);
-        Assertions.assertNotNull(actual);
-        Assertions.assertEquals(3, actual.size());
-        EqualsBuilder.reflectionEquals(categoryDto1, actual.get(0), "id");
-        EqualsBuilder.reflectionEquals(categoryDto2, actual.get(1), "id");
-        EqualsBuilder.reflectionEquals(categoryDto3, actual.get(2), "id");
+        JsonNode content = root.get(TestConstants.GET_CONTENT);
+        List<CategoryDto> actual = objectMapper.readerForListOf(CategoryDto.class)
+                .readValue(content);
+        assertNotNull(actual);
+        assertEquals(3, actual.size());
+        assertTrue(EqualsBuilder.reflectionEquals(categoryDto1,
+                actual.get(TestConstants.ZERO), TestConstants.EXCLUDE_ID));
+        assertTrue(EqualsBuilder.reflectionEquals(categoryDto2,
+                actual.get(TestConstants.ONE.intValue()), TestConstants.EXCLUDE_ID));
+        assertTrue(EqualsBuilder.reflectionEquals(categoryDto3,
+                actual.get(TestConstants.TWO.intValue()), TestConstants.EXCLUDE_ID));
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -156,16 +140,14 @@ class CategoryControllerTest {
     @Sql(scripts = "classpath:database/category/remove-category-from-categories-table.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void getCategoryById_ValidId_ShouldReturnCategoryDto() throws Exception {
-        MvcResult result = mockMvc.perform(get(URL_ID, ONE)
+        MvcResult result = mockMvc.perform(get(TestConstants.URL_CATEGORY_ID, TestConstants.ONE)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
-
         CategoryDto actual = objectMapper
                 .readValue(result.getResponse().getContentAsString(), CategoryDto.class);
-
-        Assertions.assertNotNull(actual);
-        EqualsBuilder.reflectionEquals(categoryDto1, actual, "id");
+        assertNotNull(actual);
+        assertTrue(EqualsBuilder.reflectionEquals(categoryDto1, actual, TestConstants.EXCLUDE_ID));
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -176,22 +158,19 @@ class CategoryControllerTest {
     @Sql(scripts = "classpath:database/category/remove-category-from-categories-table.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void updateCategory_ValidInput_ShouldUpdateAndReturnCategoryDto() throws Exception {
-        mockMvc.perform(get(URL_ID, ONE))
+        mockMvc.perform(get(TestConstants.URL_CATEGORY_ID, TestConstants.ONE))
                 .andExpect(status().isOk());
-
         String jsonRequest = objectMapper.writeValueAsString(updateCategoryRequestDto);
-
-        MvcResult result = mockMvc.perform(put(URL_ID, ONE)
+        MvcResult result = mockMvc.perform(put(TestConstants.URL_CATEGORY_ID, TestConstants.ONE)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest)
                 ).andExpect(status().isOk())
                 .andReturn();
         CategoryDto actual = objectMapper
                 .readValue(result.getResponse().getContentAsString(), CategoryDto.class);
-
-        Assertions.assertNotNull(actual);
-        Assertions.assertEquals(updateCategoryRequestDto.name(), actual.name());
-        Assertions.assertEquals(updateCategoryRequestDto.description(), actual.description());
+        assertNotNull(actual);
+        assertEquals(updateCategoryRequestDto.name(), actual.name());
+        assertEquals(updateCategoryRequestDto.description(), actual.description());
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -204,16 +183,16 @@ class CategoryControllerTest {
     @Sql(scripts = "classpath:database/category/remove-category-from-categories-table.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void deleteCategory() throws Exception {
-        mockMvc.perform(get(URL_ID, ONE))
+        mockMvc.perform(get(TestConstants.URL_CATEGORY_ID, TestConstants.ONE))
                 .andExpect(status().isOk());
-        mockMvc.perform(delete(URL_ID, ONE))
+        mockMvc.perform(delete(TestConstants.URL_CATEGORY_ID, TestConstants.ONE))
                 .andExpect(status().isNoContent());
-        mockMvc.perform(get(URL_ID, ONE))
+        mockMvc.perform(get(TestConstants.URL_CATEGORY_ID, TestConstants.ONE))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @WithMockUser(username = "user", roles = {"USER"})
+    @WithMockUser
     @DisplayName("Get all books by category return books")
     @Sql(scripts = {
             "classpath:database/book/add-book-to-books-table.sql",
@@ -226,18 +205,19 @@ class CategoryControllerTest {
             "classpath:database/category/remove-category-from-categories-table.sql"},
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void getBooksByCategoryId_ValidCategoryId_ShouldReturnBooks() throws Exception {
-        mockMvc.perform(get("/categories/{Id}/books", ONE)
-                .param("page", "0")
-                .param("size", "10")
+        mockMvc.perform(get(TestConstants.URL_CATEGORY_ID_BOOKS, TestConstants.ONE)
+                .param(TestConstants.PAGE, String.valueOf(TestConstants.ZERO))
+                .param(TestConstants.SIZE, String.valueOf(TestConstants.TEN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content.length()").value(1));
+                .andExpect(jsonPath(TestConstants.CONTENT).isArray())
+                .andExpect(jsonPath(TestConstants.CONTENT_LENGTH)
+                        .value(TestConstants.ONE.intValue()));
     }
 
     @Test
-    @WithMockUser(username = "user", roles = {"USER"})
-    @DisplayName("Get all books by category return books")
+    @WithMockUser
+    @DisplayName("Insert an invalid category id should return an empty list")
     @Sql(scripts = {
             "classpath:database/book/add-book-to-books-table.sql",
             "classpath:database/category/add-category-to-categories-table.sql",
@@ -249,12 +229,12 @@ class CategoryControllerTest {
             "classpath:database/category/remove-category-from-categories-table.sql"},
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void getBooksByCategoryId_InvalidId_ShouldReturnEmptyList() throws Exception {
-        mockMvc.perform(get("/categories/{Id}/books", NON_EXISTENT_ID)
-                        .param("page", "0")
-                        .param("size", "10")
+        mockMvc.perform(get(TestConstants.URL_CATEGORY_ID_BOOKS, TestConstants.NON_EXISTING_ID)
+                        .param(TestConstants.PAGE, String.valueOf(TestConstants.ZERO))
+                        .param(TestConstants.PAGE, String.valueOf(TestConstants.TEN))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content.length()").value(0));
+                .andExpect(jsonPath(TestConstants.CONTENT).isArray())
+                .andExpect(jsonPath(TestConstants.CONTENT_LENGTH).value(TestConstants.ZERO));
     }
 }

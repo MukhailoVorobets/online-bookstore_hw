@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -19,8 +19,8 @@ import com.example.model.Book;
 import com.example.model.Category;
 import com.example.repository.book.BookRepository;
 import com.example.repository.category.CategoryRepository;
-import java.math.BigDecimal;
-import java.util.Collections;
+import com.example.util.TestConstants;
+import com.example.util.TestUtil;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,21 +38,7 @@ import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceTest {
-    private static final int METHOD_CALLED_ONCE = 1;
-    private static final Long ONE = 1L;
-    private static final Long NON_EXISTING_ID = 999L;
-    private static final int TEN = 10;
-    private static final int ZERO = 0;
-    private static final String CATEGORY_NAME = "Category";
-    private static final String CATEGORY_DESCRIPTION = "Description";
-    private static final String UPDATE_CATEGORY_NAME = "Update name";
-    private static final String UPDATE_CATEGORY_DESCRIPTION = "Update description";
-    private static final String BOOK_TITLE = "Title";
-    private static final String BOOK_AUTHOR = "Author";
-    private static final String BOOK_ISBN = "ISBN123456789";
-    private static final BigDecimal BOOK_PRICE = BigDecimal.valueOf(99.0);
-    private static final String BOOK_DESCRIPTION = "Description test";
-    private static final String BOOK_COVER_IMAGE = "https://example.com/tast-cover-image.jpg";
+    private final TestUtil testUtil = new TestUtil();
 
     @Mock
     private CategoryRepository categoryRepository;
@@ -80,98 +66,51 @@ class CategoryServiceTest {
 
     @BeforeEach
     void setUp() {
-        category = new Category();
-        category.setId(ONE);
-        category.setName(CATEGORY_NAME);
-        category.setDescription(CATEGORY_DESCRIPTION);
-
-        categoryAfterUpdate = new Category();
-        categoryAfterUpdate.setId(ONE);
-        categoryAfterUpdate.setName(UPDATE_CATEGORY_NAME);
-        categoryAfterUpdate.setDescription(UPDATE_CATEGORY_DESCRIPTION);
-
-        createCategoryRequestDto = new CreateCategoryRequestDto(
-                CATEGORY_NAME,
-                CATEGORY_DESCRIPTION
-        );
-
-        updateDto = new CreateCategoryRequestDto(
-                UPDATE_CATEGORY_NAME,
-                UPDATE_CATEGORY_DESCRIPTION
-        );
-
-        categoryDto = new CategoryDto(
-                ONE,
-                CATEGORY_NAME,
-                CATEGORY_DESCRIPTION
-        );
-
-        updatedDto = new CategoryDto(
-                ONE,
-                UPDATE_CATEGORY_NAME,
-                UPDATE_CATEGORY_DESCRIPTION
-        );
-
-        book = new Book();
-        book.setId(ONE);
-        book.setTitle(BOOK_TITLE);
-        book.setAuthor(BOOK_AUTHOR);
-        book.setIsbn(BOOK_ISBN);
-        book.setPrice(BOOK_PRICE);
-        book.setDescription(BOOK_DESCRIPTION);
-        book.setCoverImage(BOOK_COVER_IMAGE);
-        book.setCategories(Collections.singleton(category));
-
-        bookDtoWithoutCategoryIds = new BookDtoWithoutCategoryIds(
-                ONE,
-                BOOK_TITLE,
-                BOOK_AUTHOR,
-                BOOK_ISBN,
-                BOOK_PRICE,
-                BOOK_DESCRIPTION,
-                BOOK_COVER_IMAGE
-        );
-
+        category = testUtil.getCategory();
+        categoryAfterUpdate = testUtil.getCategoryAfterUpdate();
+        createCategoryRequestDto = testUtil.getCreateCategoryRequestDto();
+        updateDto = testUtil.getUpdateCategoryRequestDto();
+        categoryDto = testUtil.getCategoryDto1();
+        updatedDto = testUtil.getUpdatedDto();
+        book = testUtil.getBook();
+        bookDtoWithoutCategoryIds = testUtil.getBookDtoWithoutCategoryIds();
     }
 
     @Test
     @DisplayName("Verify all category return pageable")
     void findAll_Valid_ReturnPageableCategoryDto() {
-        Pageable pageable = PageRequest.of(ONE.intValue(), TEN);
+        Pageable pageable = PageRequest.of(TestConstants.ONE.intValue(),
+                TestConstants.TEN.intValue());
         Page<Category> categoryPage = new PageImpl<>(List.of(category));
-
         when(categoryRepository.findAll(pageable)).thenReturn(categoryPage);
         when(categoryMapper.toDto(category)).thenReturn(categoryDto);
-
         Page<CategoryDto> result = categoryService.findAll(pageable);
-
         assertNotNull(result);
-        assertEquals(ONE, result.getTotalElements());
-        assertEquals(CATEGORY_NAME, result.getContent().get(ZERO).name());
-
-        verify(categoryRepository, Mockito.times(METHOD_CALLED_ONCE)).findAll(pageable);
+        assertEquals(TestConstants.ONE, result.getTotalElements());
+        assertEquals(TestConstants.CATEGORY_NAME,
+                result.getContent().get(TestConstants.ZERO).name());
+        verify(categoryRepository).findAll(pageable);
     }
 
     @Test
     @DisplayName("Verify category return by valid ID")
     void getCategoryDtoById_WithValidId_ShouldReturnValidCategoryDto() {
-        when(categoryRepository.findById(ONE)).thenReturn(Optional.of(category));
+        when(categoryRepository.findById(TestConstants.ONE)).thenReturn(Optional.of(category));
         when(categoryMapper.toDto(category)).thenReturn(categoryDto);
-
-        CategoryDto result = categoryService.getById(ONE);
-
+        CategoryDto result = categoryService.getById(TestConstants.ONE);
         assertNotNull(result);
         assertEquals(categoryDto, result);
-        verify(categoryRepository, Mockito.times(METHOD_CALLED_ONCE)).findById(ONE);
+        verify(categoryRepository).findById(TestConstants.ONE);
     }
 
     @Test
     @DisplayName("Throw EntityNotFoundException when category Id is not valid")
     void getCategoryDtoById_WithNotValidId_ShouldThrowEntityNotFoundException() {
-        when(categoryRepository.findById(NON_EXISTING_ID)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> categoryService.getById(NON_EXISTING_ID));
-        verify(categoryRepository, Mockito.times(METHOD_CALLED_ONCE)).findById(NON_EXISTING_ID);
+        when(categoryRepository.findById(TestConstants.NON_EXISTING_ID))
+                .thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class,
+                () -> categoryService.getById(TestConstants.NON_EXISTING_ID));
+        verify(categoryRepository).findById(TestConstants.NON_EXISTING_ID);
     }
 
     @Test
@@ -180,90 +119,74 @@ class CategoryServiceTest {
         when(categoryRepository.save(category)).thenReturn(category);
         when(categoryMapper.toDto(category)).thenReturn(categoryDto);
         when(categoryMapper.toModel(createCategoryRequestDto)).thenReturn(category);
-
         CategoryDto result = categoryService.save(createCategoryRequestDto);
-
         assertNotNull(result);
         assertEquals(categoryDto, result);
-
-        verify(categoryRepository, Mockito.times(METHOD_CALLED_ONCE))
+        verify(categoryRepository)
                 .save(Mockito.any(Category.class));
-        verify(categoryMapper, Mockito.times(METHOD_CALLED_ONCE))
+        verify(categoryMapper)
                 .toModel(Mockito.any(CreateCategoryRequestDto.class));
     }
 
     @Test
     @DisplayName("Verify updated category returns by valid input")
     void update_WithValidIdAndInput_ReturnsUpdatedCategoryDto() {
-        when(categoryRepository.findById(ONE)).thenReturn(Optional.of(category));
+        when(categoryRepository.findById(TestConstants.ONE)).thenReturn(Optional.of(category));
         when(categoryRepository.save(Mockito.any(Category.class))).thenReturn(categoryAfterUpdate);
         when(categoryMapper.toDto(categoryAfterUpdate)).thenReturn(updatedDto);
-
-        CategoryDto result = categoryService.update(ONE, updateDto);
-
+        CategoryDto result = categoryService.update(TestConstants.ONE, updateDto);
         assertNotNull(result);
-        assertEquals(UPDATE_CATEGORY_NAME, result.name());
-        assertEquals(UPDATE_CATEGORY_DESCRIPTION, result.description());
-
-        verify(categoryRepository, Mockito.times(METHOD_CALLED_ONCE)).findById(ONE);
-        verify(categoryRepository, Mockito.times(METHOD_CALLED_ONCE)).save(category);
+        assertEquals(TestConstants.UPDATE_CATEGORY_NAME, result.name());
+        assertEquals(TestConstants.UPDATE_CATEGORY_DESCRIPTION, result.description());
+        verify(categoryRepository).findById(TestConstants.ONE);
+        verify(categoryRepository).save(category);
     }
 
     @Test
     @DisplayName("Verify category is deleted by ID")
     void deleteById_WithValidId_ShouldCallRepositoryDelete() {
-        Mockito.doNothing().when(categoryRepository).deleteById(ONE);
-
-        categoryService.deleteById(ONE);
-
-        verify(categoryRepository).deleteById(ONE);
+        doNothing().when(categoryRepository).deleteById(TestConstants.ONE);
+        categoryService.deleteById(TestConstants.ONE);
+        verify(categoryRepository).deleteById(TestConstants.ONE);
     }
 
     @Test
     @DisplayName("Throws EntityNotFoundException when category not found by ID")
     void getCategoryById_WithInvalidId_ThrowsEntityNotFoundException() {
-        when(categoryRepository.findById(NON_EXISTING_ID)).thenReturn(Optional.empty());
-
+        when(categoryRepository.findById(TestConstants.NON_EXISTING_ID))
+                .thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class,
-                () -> categoryService.getCategoryById(NON_EXISTING_ID));
-
-        verify(categoryRepository, times(1)).findById(NON_EXISTING_ID);
+                () -> categoryService.getCategoryById(TestConstants.NON_EXISTING_ID));
+        verify(categoryRepository).findById(TestConstants.NON_EXISTING_ID);
         verifyNoMoreInteractions(categoryRepository);
     }
 
     @Test
     @DisplayName("Verify book return by valid category ID")
     void getBooksByCategoryId_WithValidId_ReturnBookDtoWithoutCategoryIds() {
-        Pageable pageable = PageRequest.of(ONE.intValue(), TEN);
+        Pageable pageable = PageRequest.of(TestConstants.ONE.intValue(),
+                TestConstants.TEN.intValue());
         Page<Book> booksPage = new PageImpl<>(List.of(book));
-
         when(bookRepository.findAllByCategoryId(category.getId(), pageable)).thenReturn(booksPage);
         when(bookMapper.toDtoWithoutCategories(book)).thenReturn(bookDtoWithoutCategoryIds);
-
         Page<BookDtoWithoutCategoryIds> resultBookDto = categoryService
                 .getBooksByCategoryId(category.getId(), pageable);
-
         assertNotNull(resultBookDto);
-        assertEquals(bookDtoWithoutCategoryIds, resultBookDto.getContent().get(ZERO));
-
-        verify(bookRepository, Mockito.times(METHOD_CALLED_ONCE))
-                .findAllByCategoryId(category.getId(), pageable);
+        assertEquals(bookDtoWithoutCategoryIds, resultBookDto.getContent().get(TestConstants.ZERO));
+        verify(bookRepository).findAllByCategoryId(category.getId(), pageable);
     }
 
     @Test
     @DisplayName("Verify empty result when no books for category ID")
     void getBooksByCategoryId_WithValidIdButNoBooks_ReturnsEmptyPage() {
-        Pageable pageable = PageRequest.of(ONE.intValue(), TEN);
+        Pageable pageable = PageRequest.of(TestConstants.ONE.intValue(),
+                TestConstants.TEN.intValue());
         Page<Book> emptyPage = Page.empty(pageable);
-
-        when(bookRepository.findAllByCategoryId(ONE, pageable)).thenReturn(emptyPage);
-
+        when(bookRepository.findAllByCategoryId(TestConstants.ONE, pageable)).thenReturn(emptyPage);
         Page<BookDtoWithoutCategoryIds> result = categoryService
-                .getBooksByCategoryId(ONE, pageable);
-
+                .getBooksByCategoryId(TestConstants.ONE, pageable);
         assertNotNull(result);
         assertTrue(result.isEmpty());
-
-        verify(bookRepository).findAllByCategoryId(ONE, pageable);
+        verify(bookRepository).findAllByCategoryId(TestConstants.ONE, pageable);
     }
 }

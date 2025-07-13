@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.example.model.Book;
+import com.example.util.TestConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,6 @@ import org.springframework.test.context.jdbc.Sql;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class BookRepositoryTest {
-    private static final int ZERO = 0;
-    private static final int TEN = 10;
-    private static final Long ONE = 1L;
-
     @Autowired
     private BookRepository bookRepository;
 
@@ -35,9 +32,10 @@ class BookRepositoryTest {
             "classpath:database/category/remove-category-from-categories-table.sql",
     }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void findAllByCategoryId() {
-        Page<Book> result = bookRepository.findAllByCategoryId(ONE, PageRequest.of(ZERO, TEN));
+        Page<Book> result = bookRepository.findAllByCategoryId(TestConstants.ONE,
+                PageRequest.of(TestConstants.ZERO, TestConstants.TEN.intValue()));
 
         assertNotNull(result);
-        assertEquals(ONE.intValue(), result.getTotalElements());
+        assertEquals(TestConstants.ONE.intValue(), result.getTotalElements());
     }
 }
