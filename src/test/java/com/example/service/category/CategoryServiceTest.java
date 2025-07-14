@@ -70,7 +70,7 @@ class CategoryServiceTest {
         categoryAfterUpdate = testUtil.getCategoryAfterUpdate();
         createCategoryRequestDto = testUtil.getCreateCategoryRequestDto();
         updateDto = testUtil.getUpdateCategoryRequestDto();
-        categoryDto = testUtil.getCategoryDto1();
+        categoryDto = testUtil.getCategoryDtoOne();
         updatedDto = testUtil.getUpdatedDto();
         book = testUtil.getBook();
         bookDtoWithoutCategoryIds = testUtil.getBookDtoWithoutCategoryIds();

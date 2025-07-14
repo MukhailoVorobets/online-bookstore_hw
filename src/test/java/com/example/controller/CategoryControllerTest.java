@@ -40,9 +40,9 @@ class CategoryControllerTest {
     private CreateCategoryRequestDto createCategoryInvalidInput;
     private CreateCategoryRequestDto updateCategoryRequestDto;
     private CreateCategoryRequestDto createCategoryRequestDto;
-    private CategoryDto categoryDto1;
-    private CategoryDto categoryDto2;
-    private CategoryDto categoryDto3;
+    private CategoryDto categoryDtoOne;
+    private CategoryDto categoryDtoTwo;
+    private CategoryDto categoryDtoThree;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -50,9 +50,9 @@ class CategoryControllerTest {
     @BeforeEach
     void setUp() {
         createCategoryRequestDto = testUtil.getCreateCategoryRequestDto();
-        categoryDto1 = testUtil.getCategoryDto1();
-        categoryDto2 = testUtil.getCategoryDto2();
-        categoryDto3 = testUtil.getCategoryDto3();
+        categoryDtoOne = testUtil.getCategoryDtoOne();
+        categoryDtoTwo = testUtil.getCategoryDtoTwo();
+        categoryDtoThree = testUtil.getCategoryDtoThree();
         createCategoryInvalidInput = testUtil.getCreateCategoryInvalidInput();
         updateCategoryRequestDto = testUtil.getUpdateCategoryRequestDto();
     }
@@ -124,11 +124,11 @@ class CategoryControllerTest {
                 .readValue(content);
         assertNotNull(actual);
         assertEquals(3, actual.size());
-        assertTrue(EqualsBuilder.reflectionEquals(categoryDto1,
+        assertTrue(EqualsBuilder.reflectionEquals(categoryDtoOne,
                 actual.get(TestConstants.ZERO), TestConstants.EXCLUDE_ID));
-        assertTrue(EqualsBuilder.reflectionEquals(categoryDto2,
+        assertTrue(EqualsBuilder.reflectionEquals(categoryDtoTwo,
                 actual.get(TestConstants.ONE.intValue()), TestConstants.EXCLUDE_ID));
-        assertTrue(EqualsBuilder.reflectionEquals(categoryDto3,
+        assertTrue(EqualsBuilder.reflectionEquals(categoryDtoThree,
                 actual.get(TestConstants.TWO.intValue()), TestConstants.EXCLUDE_ID));
     }
 
@@ -147,7 +147,8 @@ class CategoryControllerTest {
         CategoryDto actual = objectMapper
                 .readValue(result.getResponse().getContentAsString(), CategoryDto.class);
         assertNotNull(actual);
-        assertTrue(EqualsBuilder.reflectionEquals(categoryDto1, actual, TestConstants.EXCLUDE_ID));
+        assertTrue(EqualsBuilder.reflectionEquals(categoryDtoOne,
+                actual, TestConstants.EXCLUDE_ID));
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})

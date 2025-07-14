@@ -1,4 +1,4 @@
-package com.example.service.config;
+package com.example.config;
 
 import org.testcontainers.containers.MySQLContainer;
 

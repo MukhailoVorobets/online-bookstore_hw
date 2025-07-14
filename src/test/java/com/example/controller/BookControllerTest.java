@@ -40,9 +40,10 @@ class BookControllerTest {
     private final TestUtil testUtil = new TestUtil();
     private CreateBookRequestDto requestDto;
     private CreateBookRequestDto updateBookRequestDto;
-    private BookDto bookDto1;
-    private BookDto bookDto2;
-    private BookDto bookDto3;
+    private BookDto bookDtoAfterUpdate;
+    private BookDto bookDtoOne;
+    private BookDto bookDtoTwo;
+    private BookDto bookDtoThree;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -59,10 +60,11 @@ class BookControllerTest {
     @BeforeEach
     void setUp() {
         requestDto = testUtil.getCreateBookRequestDto();
-        bookDto1 = testUtil.getBookDto1();
-        bookDto2 = testUtil.getBookDto2();
-        bookDto3 = testUtil.getBookDto3();
+        bookDtoOne = testUtil.getBookDtoOne();
+        bookDtoTwo = testUtil.getBookDtoTwo();
+        bookDtoThree = testUtil.getBookDtoThree();
         updateBookRequestDto = testUtil.getUpdateBookRequestDto();
+        bookDtoAfterUpdate = testUtil.getBookDtoAfterUpdate();
     }
 
     @WithMockUser
@@ -92,11 +94,11 @@ class BookControllerTest {
         List<BookDto> actual = objectMapper.readerForListOf(BookDto.class).readValue(content);
         assertNotNull(actual);
         assertEquals(TestConstants.THREE, actual.size());
-        assertTrue(EqualsBuilder.reflectionEquals(bookDto1,
+        assertTrue(EqualsBuilder.reflectionEquals(bookDtoOne,
                 actual.get(TestConstants.ZERO), TestConstants.EXCLUDE_ID));
-        assertTrue(EqualsBuilder.reflectionEquals(bookDto2,
+        assertTrue(EqualsBuilder.reflectionEquals(bookDtoTwo,
                 actual.get(TestConstants.ONE.intValue()), TestConstants.EXCLUDE_ID));
-        assertTrue(EqualsBuilder.reflectionEquals(bookDto3,
+        assertTrue(EqualsBuilder.reflectionEquals(bookDtoThree,
                 actual.get(TestConstants.TWO.intValue()), TestConstants.EXCLUDE_ID));
     }
 
@@ -120,7 +122,7 @@ class BookControllerTest {
                 .andReturn();
         BookDto actual = objectMapper.readValue(result.getResponse()
                 .getContentAsString(), BookDto.class);
-        assertTrue(EqualsBuilder.reflectionEquals(bookDto1, actual,
+        assertTrue(EqualsBuilder.reflectionEquals(bookDtoOne, actual,
                 TestConstants.EXCLUDE_ID));
     }
 
@@ -158,7 +160,7 @@ class BookControllerTest {
                 .getContentAsString(), BookDto.class);
         assertNotNull(actual);
         assertNotNull(actual.getId());
-        assertTrue(EqualsBuilder.reflectionEquals(bookDto1, actual, TestConstants.EXCLUDE_ID));
+        assertTrue(EqualsBuilder.reflectionEquals(bookDtoOne, actual, TestConstants.EXCLUDE_ID));
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -206,12 +208,8 @@ class BookControllerTest {
         BookDto actual = objectMapper.readValue(result.getResponse()
                 .getContentAsString(), BookDto.class);
         assertNotNull(actual);
-        assertEquals(updateBookRequestDto.getTitle(), actual.getTitle());
-        assertEquals(updateBookRequestDto.getAuthor(), actual.getAuthor());
-        assertEquals(updateBookRequestDto.getPrice(), actual.getPrice());
-        assertEquals(updateBookRequestDto.getDescription(), actual.getDescription());
-        assertEquals(updateBookRequestDto.getCoverImage(), actual.getCoverImage());
-        assertEquals(updateBookRequestDto.getCategoryIds(), actual.getCategoryIds());
+        assertTrue(EqualsBuilder.reflectionEquals(bookDtoAfterUpdate,
+                actual, TestConstants.EXCLUDE_ID));
     }
 
     @WithMockUser
@@ -228,8 +226,9 @@ class BookControllerTest {
             "classpath:database/category/remove-category-from-categories-table.sql"},
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void search_ValidId_ShouldReturnBook() throws Exception {
-        String searchParameter = "?title=" + TestConstants.BOOK_TITLE_1
-                + "&author=" + TestConstants.BOOK_AUTHOR_1 + "&isbn=" + TestConstants.BOOK_ISBN_1;
+        String searchParameter = "?title=" + TestConstants.BOOK_TITLE_ONE
+                + "&author=" + TestConstants.BOOK_AUTHOR_ONE
+                + "&isbn=" + TestConstants.BOOK_ISBN_ONE;
         MvcResult result = mockMvc.perform(get(TestConstants.URL_BOOK_SEARCH + searchParameter)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -239,7 +238,7 @@ class BookControllerTest {
         JsonNode content = root.get(TestConstants.GET_CONTENT);
         List<BookDto> bookDtoList = objectMapper.readerForListOf(BookDto.class).readValue(content);
         assertNotNull(bookDtoList);
-        assertTrue(EqualsBuilder.reflectionEquals(bookDto1,
+        assertTrue(EqualsBuilder.reflectionEquals(bookDtoOne,
                 bookDtoList.get(TestConstants.ZERO), TestConstants.EXCLUDE_ID));
     }
 }

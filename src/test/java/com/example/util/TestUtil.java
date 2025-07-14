@@ -40,25 +40,25 @@ public class TestUtil {
                 TestConstants.UPDATE_CATEGORY_DESCRIPTION);
     }
 
-    public CategoryDto getCategoryDto1() {
+    public CategoryDto getCategoryDtoOne() {
         return new CategoryDto(
                 TestConstants.ONE,
-                TestConstants.CATEGORY_NAME_1,
-                TestConstants.CATEGORY_DESCRIPTION_1);
+                TestConstants.CATEGORY_NAME_ONE,
+                TestConstants.CATEGORY_DESCRIPTION_ONE);
     }
 
-    public CategoryDto getCategoryDto2() {
+    public CategoryDto getCategoryDtoTwo() {
         return new CategoryDto(
                 TestConstants.TWO,
-                TestConstants.CATEGORY_NAME_2,
-                TestConstants.CATEGORY_DESCRIPTION_2);
+                TestConstants.CATEGORY_NAME_TWO,
+                TestConstants.CATEGORY_DESCRIPTION_TWO);
     }
 
-    public CategoryDto getCategoryDto3() {
+    public CategoryDto getCategoryDtoThree() {
         return new CategoryDto(
                 TestConstants.THREE,
-                TestConstants.CATEGORY_NAME_3,
-                TestConstants.CATEGORY_DESCRIPTION_3);
+                TestConstants.CATEGORY_NAME_THREE,
+                TestConstants.CATEGORY_DESCRIPTION_THREE);
     }
 
     public CreateCategoryRequestDto getCreateCategoryInvalidInput() {
@@ -100,12 +100,12 @@ public class TestUtil {
 
     public CreateBookRequestDto getCreateBookRequestDto() {
         CreateBookRequestDto requestDto = new CreateBookRequestDto();
-        requestDto.setTitle(TestConstants.BOOK_TITLE_1);
-        requestDto.setAuthor(TestConstants.BOOK_AUTHOR_1);
-        requestDto.setIsbn(TestConstants.BOOK_ISBN_1);
-        requestDto.setPrice(TestConstants.BOOK_PRICE_1);
-        requestDto.setDescription(TestConstants.BOOK_DESCRIPTION_1);
-        requestDto.setCoverImage(TestConstants.BOOK_COVER_IMAGE_1);
+        requestDto.setTitle(TestConstants.BOOK_TITLE_ONE);
+        requestDto.setAuthor(TestConstants.BOOK_AUTHOR_ONE);
+        requestDto.setIsbn(TestConstants.BOOK_ISBN_ONE);
+        requestDto.setPrice(TestConstants.BOOK_PRICE_ONE);
+        requestDto.setDescription(TestConstants.BOOK_DESCRIPTION_ONE);
+        requestDto.setCoverImage(TestConstants.BOOK_COVER_IMAGE_ONE);
         requestDto.setCategoryIds(Set.of(TestConstants.ONE));
         return requestDto;
     }
@@ -123,41 +123,41 @@ public class TestUtil {
         return bookDto1;
     }
 
-    public BookDto getBookDto1() {
+    public BookDto getBookDtoOne() {
         BookDto bookDto1 = new BookDto();
         bookDto1.setId(TestConstants.ONE);
-        bookDto1.setTitle(TestConstants.BOOK_TITLE_1);
-        bookDto1.setAuthor(TestConstants.BOOK_AUTHOR_1);
-        bookDto1.setIsbn(TestConstants.BOOK_ISBN_1);
-        bookDto1.setPrice(TestConstants.BOOK_PRICE_1);
-        bookDto1.setDescription(TestConstants.BOOK_DESCRIPTION_1);
-        bookDto1.setCoverImage(TestConstants.BOOK_COVER_IMAGE_1);
+        bookDto1.setTitle(TestConstants.BOOK_TITLE_ONE);
+        bookDto1.setAuthor(TestConstants.BOOK_AUTHOR_ONE);
+        bookDto1.setIsbn(TestConstants.BOOK_ISBN_ONE);
+        bookDto1.setPrice(TestConstants.BOOK_PRICE_ONE);
+        bookDto1.setDescription(TestConstants.BOOK_DESCRIPTION_ONE);
+        bookDto1.setCoverImage(TestConstants.BOOK_COVER_IMAGE_ONE);
         bookDto1.setCategoryIds(Set.of(TestConstants.ONE));
         return bookDto1;
     }
 
-    public BookDto getBookDto2() {
+    public BookDto getBookDtoTwo() {
         BookDto bookDto2 = new BookDto();
         bookDto2.setId(TestConstants.TWO);
-        bookDto2.setTitle(TestConstants.BOOK_TITLE_2);
-        bookDto2.setAuthor(TestConstants.BOOK_AUTHOR_2);
-        bookDto2.setIsbn(TestConstants.BOOK_ISBN_2);
-        bookDto2.setPrice(TestConstants.BOOK_PRICE_2);
-        bookDto2.setDescription(TestConstants.BOOK_DESCRIPTION_2);
-        bookDto2.setCoverImage(TestConstants.BOOK_COVER_IMAGE_2);
+        bookDto2.setTitle(TestConstants.BOOK_TITLE_TWO);
+        bookDto2.setAuthor(TestConstants.BOOK_AUTHOR_TWO);
+        bookDto2.setIsbn(TestConstants.BOOK_ISBN_TWO);
+        bookDto2.setPrice(TestConstants.BOOK_PRICE_TWO);
+        bookDto2.setDescription(TestConstants.BOOK_DESCRIPTION_TWO);
+        bookDto2.setCoverImage(TestConstants.BOOK_COVER_IMAGE_TWO);
         bookDto2.setCategoryIds(Set.of(TestConstants.TWO));
         return bookDto2;
     }
 
-    public BookDto getBookDto3() {
+    public BookDto getBookDtoThree() {
         BookDto bookDto3 = new BookDto();
         bookDto3.setId(TestConstants.THREE);
-        bookDto3.setTitle(TestConstants.BOOK_TITLE_3);
-        bookDto3.setAuthor(TestConstants.BOOK_AUTHOR_3);
-        bookDto3.setIsbn(TestConstants.BOOK_ISBN_3);
-        bookDto3.setPrice(TestConstants.BOOK_PRICE_3);
-        bookDto3.setDescription(TestConstants.BOOK_DESCRIPTION_3);
-        bookDto3.setCoverImage(TestConstants.BOOK_COVER_IMAGE_3);
+        bookDto3.setTitle(TestConstants.BOOK_TITLE_THREE);
+        bookDto3.setAuthor(TestConstants.BOOK_AUTHOR_THREE);
+        bookDto3.setIsbn(TestConstants.BOOK_ISBN_THREE);
+        bookDto3.setPrice(TestConstants.BOOK_PRICE_THREE);
+        bookDto3.setDescription(TestConstants.BOOK_DESCRIPTION_THREE);
+        bookDto3.setCoverImage(TestConstants.BOOK_COVER_IMAGE_THREE);
         bookDto3.setCategoryIds(Set.of(TestConstants.THREE));
         return bookDto3;
     }
@@ -197,5 +197,18 @@ public class TestUtil {
         bookAfterUpdate.setDescription(TestConstants.UPDATE_BOOK_DESCRIPTION);
         bookAfterUpdate.setCoverImage(TestConstants.UPDATE_BOOK_COVER_IMAGE);
         return bookAfterUpdate;
+    }
+
+    public BookDto getBookDtoAfterUpdate() {
+        BookDto bookDtoAfterUpdate = new BookDto();
+        bookDtoAfterUpdate.setId(TestConstants.ONE);
+        bookDtoAfterUpdate.setTitle(TestConstants.UPDATE_BOOK_TITLE);
+        bookDtoAfterUpdate.setAuthor(TestConstants.UPDATE_BOOK_AUTHOR);
+        bookDtoAfterUpdate.setIsbn(TestConstants.UPDATE_BOOK_ISBN);
+        bookDtoAfterUpdate.setPrice(TestConstants.UPDATE_BOOK_PRICE);
+        bookDtoAfterUpdate.setDescription(TestConstants.UPDATE_BOOK_DESCRIPTION);
+        bookDtoAfterUpdate.setCoverImage(TestConstants.UPDATE_BOOK_COVER_IMAGE);
+        bookDtoAfterUpdate.setCategoryIds(Set.of(TestConstants.TWO));
+        return bookDtoAfterUpdate;
     }
 }
